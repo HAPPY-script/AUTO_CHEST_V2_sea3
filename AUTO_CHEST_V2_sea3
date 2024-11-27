@@ -1,0 +1,166 @@
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Auto Chest V2";
+    Text = "Created by HAPPY script";
+    Duration = 7;
+})
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+local lungeSpeed = 300
+local skipDelay = 2
+local chestNames = {"Chest1", "Chest2", "Chest3"}
+local specialCoords = {
+    Vector3.new(-11993.58, 331.93, -8844.18),
+    Vector3.new(5314.58, 22.66, -125.94)
+}
+
+local isActive = false
+local isRunning = false
+
+local function getClosestChest()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local closestChest
+    local minDistance = math.huge
+
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if table.find(chestNames, obj.Name) and obj:IsA("BasePart") then
+            local distance = (humanoidRootPart.Position - obj.Position).Magnitude
+            if distance < minDistance then
+                closestChest = obj
+                minDistance = distance
+            end
+        end
+    end
+
+    return closestChest
+end
+
+local function teleportToPosition(position)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    humanoidRootPart.CFrame = CFrame.new(position)
+end
+
+local function performLunge(target)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local startTime = tick()
+
+    while target and target.Parent and (tick() - startTime < skipDelay) do
+        local direction = (target.Position - humanoidRootPart.Position).Unit
+        humanoidRootPart.CFrame = humanoidRootPart.CFrame + direction * (lungeSpeed * RunService.Heartbeat:Wait())
+
+        if (humanoidRootPart.Position - target.Position).Magnitude < 3 then
+            break
+        end
+    end
+end
+
+local function checkAndTeleport(target)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    for _, coord in ipairs(specialCoords) do
+        local distanceToTarget = (target.Position - coord).Magnitude
+        local distanceFromPlayer = (humanoidRootPart.Position - target.Position).Magnitude
+
+        if distanceToTarget < distanceFromPlayer then
+            teleportToPosition(coord)
+            task.wait(0.5)
+            teleportToPosition(coord + Vector3.new(0, 70, 0))
+            break
+        end
+    end
+end
+
+local function lungeLoop()
+    while isActive do
+        local closestChest = getClosestChest()
+        if closestChest then
+            checkAndTeleport(closestChest)
+            performLunge(closestChest)
+        else
+            RunService.Heartbeat:Wait()
+        end
+    end
+    isRunning = false
+end
+
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.ResetOnSpawn = false
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 250, 0, 150)
+frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(80, 50, 30)
+frame.BackgroundTransparency = 0.1
+frame.Active = true
+frame.Draggable = true
+
+local uiCorner = Instance.new("UICorner", frame)
+uiCorner.CornerRadius = UDim.new(0.1, 0)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Treasure Hunt S3"
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.Garamond
+title.TextScaled = true
+
+local toggleButton = Instance.new("TextButton", frame)
+toggleButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+toggleButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+toggleButton.Text = "Stop"
+toggleButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextScaled = true
+
+local buttonCorner = Instance.new("UICorner", toggleButton)
+buttonCorner.CornerRadius = UDim.new(0.1, 0)
+
+local closeButton = Instance.new("TextButton", frame)
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.Text = "X"
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextScaled = true
+
+local closeCorner = Instance.new("UICorner", closeButton)
+closeCorner.CornerRadius = UDim.new(0.5, 0)
+
+toggleButton.MouseButton1Click:Connect(function()
+    isActive = not isActive
+    toggleButton.Text = isActive and "Start" or "Stop"
+    toggleButton.BackgroundColor3 = isActive and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(200, 0, 0)
+
+    if isActive and not isRunning then
+        isRunning = true
+        task.spawn(lungeLoop)
+    end
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+    isActive = false
+    screenGui:Destroy()
+end)
+
+local function preventSitting()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+
+    humanoid.Seated:Connect(function(isSeated)
+        if isActive and isSeated then
+            humanoid.Sit = false
+        end
+    end)
+end
+
+preventSitting()
