@@ -14,7 +14,10 @@ local skipDelay = 2
 local chestNames = {"Chest1", "Chest2", "Chest3"}
 local specialCoords = {
     Vector3.new(-11993.58, 331.93, -8844.18),
-    Vector3.new(5314.58, 22.66, -125.94)
+    Vector3.new(5314.58, 22.66, -125.94),
+    Vector3.new(-5089.66, 316.61, -3146.13),
+    Vector3.new(-12463.60, 376.43, -7566.08),
+    Vector3.new(5742.96, 612.07, -283.69)
 }
 
 local isActive = false
