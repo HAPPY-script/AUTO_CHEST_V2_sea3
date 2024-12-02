@@ -42,6 +42,16 @@ local function getClosestChest()
     return closestChest
 end
 
+local function getChestCount()
+    local count = 0
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if table.find(chestNames, obj.Name) and obj:IsA("BasePart") then
+            count += 1
+        end
+    end
+    return count
+end
+
 local function teleportToPosition(position)
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -96,7 +106,7 @@ end
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 screenGui.ResetOnSpawn = false
 local frame = Instance.new("Frame", screenGui)
-frame.Size = UDim2.new(0, 250, 0, 150)
+frame.Size = UDim2.new(0, 250, 0, 180)
 frame.Position = UDim2.new(0.5, -125, 0.5, -75)
 frame.BackgroundColor3 = Color3.fromRGB(80, 50, 30)
 frame.BackgroundTransparency = 0.1
@@ -117,7 +127,7 @@ title.TextScaled = true
 
 local toggleButton = Instance.new("TextButton", frame)
 toggleButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-toggleButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+toggleButton.Position = UDim2.new(0.1, 0, 0.3, 0)
 toggleButton.Text = "Stop"
 toggleButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -126,6 +136,15 @@ toggleButton.TextScaled = true
 
 local buttonCorner = Instance.new("UICorner", toggleButton)
 buttonCorner.CornerRadius = UDim.new(0.1, 0)
+
+local chestCounter = Instance.new("TextLabel", frame)
+chestCounter.Size = UDim2.new(0.8, 0, 0.2, 0)
+chestCounter.Position = UDim2.new(0.1, 0, 0.7, 0)
+chestCounter.Text = "Chests: 0"
+chestCounter.TextColor3 = Color3.fromRGB(255, 255, 255)
+chestCounter.BackgroundTransparency = 1
+chestCounter.Font = Enum.Font.Gotham
+chestCounter.TextScaled = true
 
 local closeButton = Instance.new("TextButton", frame)
 closeButton.Size = UDim2.new(0, 30, 0, 30)
@@ -167,3 +186,13 @@ local function preventSitting()
 end
 
 preventSitting()
+
+-- Update chest counter
+task.spawn(function()
+    while true do
+        if chestCounter and chestCounter.Parent then
+            chestCounter.Text = "Chests: " .. getChestCount()
+        end
+        task.wait(0.1)
+    end
+end)
