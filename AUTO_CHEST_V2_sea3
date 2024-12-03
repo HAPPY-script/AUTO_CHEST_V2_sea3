@@ -13,10 +13,11 @@ local lungeSpeed = 300
 local skipDelay = 2
 local chestNames = {"Chest1", "Chest2", "Chest3"}
 local specialCoords = {
-    Vector3.new(-286.99, 306.26, 597.80),
-    Vector3.new(-6508.56, 83.31, -132.84),
-    Vector3.new(2284.91, 15.28, 905.56),
-    Vector3.new(923.21, 125.18, 32852.83)
+    Vector3.new(-11993.58, 331.93, -8844.18),
+    Vector3.new(5314.58, 22.66, -125.94),
+    Vector3.new(-5089.66, 316.61, -3146.13),
+    Vector3.new(-12463.60, 376.43, -7566.08),
+    Vector3.new(5742.96, 612.07, -283.69)
 }
 
 local isActive = false
@@ -118,7 +119,7 @@ uiCorner.CornerRadius = UDim.new(0.1, 0)
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Position = UDim2.new(0, 0, 0, 0)
-title.Text = "Treasure Hunt S2"
+title.Text = "Treasure Hunt S3"
 title.TextColor3 = Color3.fromRGB(255, 215, 0)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Garamond
