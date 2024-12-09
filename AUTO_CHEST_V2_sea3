@@ -84,7 +84,7 @@ local function checkAndTeleport(target)
         if distanceToTarget < distanceFromPlayer then
             teleportToPosition(coord)
             task.wait(0.5)
-            teleportToPosition(coord + Vector3.new(0, 70, 0))
+            teleportToPosition(coord + Vector3.new(0, 100, 0))
             break
         end
     end
