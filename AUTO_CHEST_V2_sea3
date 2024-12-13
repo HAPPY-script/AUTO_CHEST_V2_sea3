@@ -11,7 +11,7 @@ local player = Players.LocalPlayer
 
 local lungeSpeed = 300
 local skipDelay = 2
-local chestNames = {"Chest1", "Chest2", "Chest3"}
+local chestNames = {"Chest1", "Chest2", "Chest3", "FragChest"}
 local specialCoords = {
     Vector3.new(-11993.58, 331.93, -8844.18),
     Vector3.new(5314.58, 22.66, -125.94),
