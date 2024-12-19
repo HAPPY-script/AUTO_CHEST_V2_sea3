@@ -11,6 +11,8 @@ local Debris = game:GetService("Debris")
 
 -- Danh sách tọa độ các đảo
 local islandCoordinates = {
+    Vector3.new(-12550.33, 364.49, -7508.61), -- dinh 1
+    Vector3.new(-12499.31, 535.62, -10127.64), -- dinh 2
     Vector3.new(5290.42, 1005.35, 388.79), -- Thị trấn phụ nữ
     Vector3.new(-4996.55, 314.51, -3010.50), -- Phái đài
     Vector3.new(2734.35, 509.11, -7393.33), -- Cây đại thụ
