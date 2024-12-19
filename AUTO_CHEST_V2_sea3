@@ -8,6 +8,7 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local Debris = game:GetService("Debris")
+local UserInputService = game:GetService("UserInputService")
 
 -- Danh sách tọa độ các đảo
 local islandCoordinates = {
@@ -84,9 +85,23 @@ local function enableSeats()
     end
 end
 
+-- Hàm chặn ngồi khi script đang bật
+local function preventSitting()
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if isActive and input.UserInputType == Enum.UserInputType.MouseButton1 then
+            local character = player.Character
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.SeatPart then
+                humanoid:Sit(nil) -- Chặn không cho ngồi
+            end
+        end
+    end)
+end
+
 -- Chạy lặp để tìm và lướt đến các chest
 local function chestLoop()
     disableSeats() -- Vô hiệu hóa ghế khi script đang chạy
+    preventSitting() -- Chặn ngồi
     while isActive do
         local pushBoxes = findPushBoxes()
         if #pushBoxes > 0 then
